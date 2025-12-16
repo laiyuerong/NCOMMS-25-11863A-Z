@@ -3,64 +3,64 @@ import math
 
 def count_columns_with_index(file_path, index_path, output_path):
     try:
-        # 读取索引文件，即cowH5N1-OH12
+        # Read the index file
         with open(index_path, 'r') as index_file:
-            # 确保索引文件只有一行
+            # Make sure that the index file contains only one line
             index_line = index_file.readline().strip()
 
-        # 读取输入文件
+        # Read the input file
         with open(file_path, 'r') as file:
             lines = file.readlines()
 
-        # 检查数据文件是否为空
+        # Check if the data file is empty
         if not lines:
-            print("error:数据文件为空")
+            print("error:empty file")
             return
 
-        # 获取总行数
+        # Obtain the total number of rows
         total_lines = len(lines)
 
-        # 获取列数
+        # Obtain the total number of colums
         num_columns = len(index_line)
 
-        # 初始化存储结果的列表
+        # Initialize the list to store the results
         results = []
 
-        # 遍历每一列
+        # Traverse each column
         for col_index in range(num_columns):
             index_char = index_line[col_index]
-            # 跳过'X'
+            # jumpe'X'
             if index_char == 'X':
                 continue
 
-            # 初始化计数器
+            # Initialize the counter
             count_dict = {}
-            # 遍历每一行
+            # Traverse each row
             for line in lines:
-                # 去除行尾的换行符
+                # Remove the line break at the end of the line
                 line = line.strip()
-                # 获取当前列的字符
+                # Get the characters of the current column
                 char = line[col_index]
-                # 跳过'X'
+                # jumpe'X'
                 if char == 'X':
                     continue
-                # 统计与索引字符不同的字符（与OH12不同的氨基酸）
+                # Count the characters that are different from the index characters
                 if char != index_char:
                     if char not in count_dict:
                         count_dict[char] = 0
                     count_dict[char] += 1
 
-            # 将结果添加到列表中
+            # Add the result to the list
             for letter, count in count_dict.items():
                 prob = count / total_lines
-                log10_prob = math.log10(prob) if prob > 0 else float('-inf')  # 对数函数在0处未定义，使用负无穷表示
+                log10_prob = math.log10(prob) if prob > 0 else float('-inf')  # The logarithmic function is undefined at 0, which is represented by negative infinity.
                 results.append((col_index + 1, letter, count, f"{index_char}{col_index + 1}{letter}", prob, log10_prob))
 
-        # 写入结果
+        # Write in the results
         with open(output_path, 'w') as output_file:
-            # 写入表头
+            # Write in the header
             output_file.write("Site\taa\tCount\tMut\tProb\tRange\n")
-            # 写入结果
+            # Write in the results
             for result in results:
                 output_file.write(f"{result[0]}\t{result[1]}\t{result[2]}\t{result[3]}\t{result[4]:.4f}\t{result[5]:.4f}\n")
 
@@ -69,7 +69,7 @@ def count_columns_with_index(file_path, index_path, output_path):
         print(f"error: {e}")
 
 
-file_path = r'C:\\aaaIMCAS\\PATH\\cow.txt'  # 输入文件路径
-index_path = r'C:\\aaaIMCAS\\PATH\\cow-OH12.txt' # 索引文件路径
-output_path = r'C:\\aaaIMCAS\\PATH\\output.txt'  # 输出文件路径
+file_path = r'C:\\aaaIMCAS\\PATH\\cow.txt'  # input file path
+index_path = r'C:\\aaaIMCAS\\PATH\\cow-OH12.txt' # index file path
+output_path = r'C:\\aaaIMCAS\\PATH\\output.txt'  # output file path
 count_columns_with_index(file_path, index_path, output_path)
